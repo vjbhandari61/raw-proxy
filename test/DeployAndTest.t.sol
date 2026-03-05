@@ -29,10 +29,6 @@ contract DeployAndTest is Test {
         CounterV1(address(proxy)).setNumber(20);
     }
 
-    function _initializeHelperV2() public {
-        CounterV2(address(proxy)).setNumber(20);
-    }
-
     function _upgradeHelper() public {
         vm.prank(owner);
         proxy.upgradeTo(address(counterV2));
@@ -59,8 +55,8 @@ contract DeployAndTest is Test {
 
     function test_CounterV2Decrement() public {
         _deploymentHelper();
+        _initializeHelperV1();
         _upgradeHelper();
-        _initializeHelperV2();
         
         CounterV2(address(proxy)).decrement();
         assertEq(CounterV2(address(proxy)).number(), 19);
