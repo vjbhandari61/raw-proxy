@@ -3,8 +3,15 @@ pragma solidity ^0.8.13;
 
 contract Proxy {
     uint256 public number;
+    struct Contact {
+        string name;
+        uint256 phone_number;
+    }
+    mapping(address => Contact) private contacts;
+
     address private _implementation;
     address private admin;
+
 
     event Upgrade(address indexed impl, uint256 timestamp);
 

@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
+
 import {Proxy} from "../src/Proxy.sol";
 import {CounterV1} from "../src/CounterV1.sol";
 import {CounterV2} from "../src/CounterV2.sol";
@@ -27,6 +28,10 @@ contract DeployAndTest is Test {
 
     function _initializeHelperV1() public {
         CounterV1(address(proxy)).setNumber(20);
+    }
+
+    function _setContactHelper() public {
+        CounterV1(address(proxy)).setContact("Vijay", 79023475322);
     }
 
     function _upgradeHelper() public {
@@ -59,5 +64,28 @@ contract DeployAndTest is Test {
         CounterV2(address(proxy)).decrement();
         assertEq(CounterV2(address(proxy)).number(), 19);
         assertEq(counterV2.number(), 0);
+    }
+
+    function test_CounterV1SetContact() public {
+        _deploymentHelper();
+        _setContactHelper();
+
+        CounterV1.Contact memory contact = CounterV1(address(proxy)).getContact();
+
+        assertEq(contact.name, "Vijay");
+        assertEq(contact.phone_number, 79023475322);
+    }
+
+    function test_CounterV2GetContact() public {
+        _deploymentHelper();
+        _setContactHelper();
+
+        _upgradeHelper();
+
+        CounterV2.Contact memory contact = CounterV2(address(proxy)).getContact();
+        
+        assertEq(contact.name, "Vijay");
+        assertEq(contact.phone_number, 79023475322);
+        assertEq(contact.active, false);
     }
 }
