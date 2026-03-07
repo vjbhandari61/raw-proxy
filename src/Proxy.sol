@@ -8,8 +8,12 @@ contract Proxy {
 
     event Upgrade(address indexed impl, uint256 timestamp);
 
-    modifier isAdmin(){
-        require(msg.sender == admin, "Proxy: User must be ADMIN!");
+    function _isAdmin() internal view {
+        require(msg.sender == admin, "Proxy: User Must Be Admin!");
+    }
+
+    modifier isAdmin() {
+        _isAdmin;
         _;
     }
 
@@ -21,6 +25,7 @@ contract Proxy {
     }
 
     function upgradeTo(address newImpl) external isAdmin {
+        _isAdmin();
         emit Upgrade(newImpl, block.timestamp);
         _implementation = newImpl;
     }
